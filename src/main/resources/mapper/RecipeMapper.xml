@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.doubleslash.mini.mapper.RecipeMapper">
+    
+ 	<!-- 레시피 리스트 조회 (미사용) -->
+    <select id="getRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+                                         
+        select * from recipe where kategorie = #{kategorie};
+         
+    </select>
+    
+    <!-- 인기 레시피 리스트 조회 -->
+    <select id="getPopularRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+                                         
+        select id, name, short_description, cooking_time, level, thumbnail_url,
+			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+		from recipe A
+		where kategorie = #{kategorie}
+		order by number_of_users desc
+		limit 3;
+         
+    </select>
+    
+    <!-- 최신 레시피 리스트 조회 -->
+    <select id="getNewRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+                                         
+        select id, name, short_description, cooking_time, level, thumbnail_url,
+			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+		from recipe A
+		where kategorie = #{kategorie}
+		order by date desc
+		limit 3;
+         
+    </select>
+    
+    <!-- 레시피 상세 조회 -->
+    <select id="getDetailRecipeList" parameterType="com.doubleslash.mini.domain.IdVO" 
+    resultType="com.doubleslash.mini.domain.RecipeDetailVO">
+                                         
+        select id, name, short_description, long_description, tags, cooking_time, level,
+        	(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites,
+        	servings, calorie, number_of_users, video_url,
+        	(select if(exists(select * from made where user_id = #{user_id} and recipe_id = A.id), True, False)) made
+		from recipe A
+		where id = #{recipe_id};
+         
+    </select>
+    
+    
+    <!-- 레시피 재료 조회 -->
+    <select id="getRecipeIngredient" parameterType="int" resultType="com.doubleslash.mini.domain.IngredientVO">
+    	
+    	select * from ingredient
+    	where id = #{recipe_id};
+    	
+    </select>
+    
+    <!-- 레시피 영양정보 조회 -->
+    <select id="getRecipeNutrition" parameterType="int" resultType="com.doubleslash.mini.domain.NutritionVO">
+    
+    	select * from nutrition
+    	where id = #{recipe_id}
+    
+    </select>
+    
+    <!-- 레시피 스텝 조회 -->
+    <select id="getRecipeStep" parameterType="int" resultType="com.doubleslash.mini.domain.StepVO">
+    
+    	select * from step
+    	where id = #{recipe_id}
+    	order by (parents_num, children_num);
+    
+    </select>
+    
+    <!-- 내가 만든 레시피 리스트 조회 -->
+    <select id="getMadeRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+    
+    	select id, name, short_description, cooking_time, level, thumbnail_url,
+    	(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites, made.date
+    	from recipe A, made
+    	where A.id = made.recipe_id and made.user_id = #{user_id}
+    	order by made.date desc;
+    
+    </select>
+    
+    <!-- 내가 만든 레시피 등록 -->
+    <insert id="postMadeRecipe" parameterType="com.doubleslash.mini.domain.IdVO">
+    
+    	insert into made values(#{user_id}, #{recipe_id}, NOW());
+    
+    </insert>
+    
+    <!-- 내가 만든 레시피 이용자수 +1 -->
+    <update id="putRecipeNumberOfUsers" parameterType="int">
+    
+    	update recipe set number_of_users = number_of_users + 1 where id = #{recipe_id};
+    
+    </update>
+    
+    <!-- 나의 즐겨찾기 레시피 조회 -->
+    <select id="getFavoriteRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+    
+    	select id, name, short_description, cooking_time, level, thumbnail_url,
+    	(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites, favorites.date
+    	from recipe A, favorites
+    	where A.id = favorites.recipe_id and favorites.user_id = #{user_id}
+    	order by favorites.date desc;
+    
+    </select>
+    
+    <!-- 나의 즐겨찾기 레시피 등록 -->
+    <insert id="postFavoriteRecipe" parameterType="com.doubleslash.mini.domain.IdVO">
+    
+    	insert into favorites values(#{user_id}, #{recipe_id}, NOW());
+    
+    </insert>
+    
+    <!-- 나의 즐겨찾기 레시피 삭제 -->
+    <delete id="deleteFavoriteRecipe" parameterType="com.doubleslash.mini.domain.IdVO">
+    
+    	delete from favorites where user_id = #{user_id} and recipe_id = #{recipe_id};
+    
+    </delete>
+    
+    <!-- 메뉴명으로 검색 -->
+    <select id="searchRecipeList_Menu" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+    
+    	select id, name, short_description, cooking_time, level, thumbnail_url,
+    	(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+    	from recipe A
+    	where name like concat('%',#{keyword},'%')
+    	order by name;
+    
+    </select>
+    
+    <!-- 재료명으로 검색 -->
+    <select id="searchRecipeList_Ingredient" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+    
+    	select id, name, short_description, cooking_time, level, thumbnail_url,
+    	(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+    	from recipe A
+    	where id in (select id from ingredient where name like concat('%',#{keyword},'%'))
+    	order by name;
+    
+    </select>
+    
+</mapper>
