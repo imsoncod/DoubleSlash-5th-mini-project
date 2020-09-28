@@ -46,14 +46,14 @@
 		from recipe A
 		where id = #{recipe_id};
          
-    </select>
-    
+    </select> 
     
     <!-- 레시피 재료 조회 -->
     <select id="getRecipeIngredient" parameterType="int" resultType="com.doubleslash.mini.domain.IngredientVO">
     	
     	select * from ingredient
-    	where id = #{recipe_id};
+    	where id = #{recipe_id}
+    	order by name;
     	
     </select>
     
@@ -62,6 +62,7 @@
     
     	select * from nutrition
     	where id = #{recipe_id}
+    	order by name;
     
     </select>
     
@@ -70,7 +71,7 @@
     
     	select * from step
     	where id = #{recipe_id}
-    	order by (parents_num, children_num);
+    	order by parents_num, children_num;
     
     </select>
     

@@ -1,8 +1,10 @@
 package com.doubleslash.mini.controller;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.doubleslash.mini.domain.IdVO;
+import com.doubleslash.mini.domain.IngredientVO;
+import com.doubleslash.mini.domain.NutritionVO;
 import com.doubleslash.mini.domain.RecipeDetailVO;
 import com.doubleslash.mini.domain.RecipeListVO;
+import com.doubleslash.mini.domain.StepVO;
 import com.doubleslash.mini.service.RecipeService;
 
 @RequestMapping(value = "/recipe")
@@ -59,12 +64,83 @@ public class RecipeController {
 	//레시피 세부 정보 조회
 	@RequestMapping(value = "/{recipe_id}", method = RequestMethod.GET)
 	@ResponseBody
-	public RecipeDetailVO getRecipeDetail(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
+	public Map<String, Object> getRecipeDetail(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
 		IdVO id_vo = new IdVO();
 		id_vo.setUser_id(user_id);
 		id_vo.setRecipe_id(recipe_id);
 		
-		RecipeDetailVO vo = mRecipeService.getDetailRecipeList(id_vo);
+		RecipeDetailVO detail_vo = mRecipeService.getDetailRecipeList(id_vo);
+		List<IngredientVO> ingredient_vo = mRecipeService.getRecipeIngredient(recipe_id);
+		List<NutritionVO> nutrition_vo = mRecipeService.getRecipeNutrition(recipe_id);
+		List<StepVO> step_vo = mRecipeService.getRecipeStep(recipe_id);
+		
+		//재료 데이터 가공
+		Map<String, Object> ingredient_json = new LinkedHashMap<String, Object>();
+		Map<String, Object> ingredient_json_main = new LinkedHashMap<String, Object>();
+		Map<String, Object> ingredient_json_sub = new LinkedHashMap<String, Object>();
+		
+		for(int i = 0; i < ingredient_vo.size(); i++) {
+			IngredientVO temp = ingredient_vo.get(i);
+			if(temp.getMain() == 1) {
+				ingredient_json_main.put(temp.getName(), temp.getAmount());
+			}else {
+				ingredient_json_sub.put(temp.getName(), temp.getAmount());
+			}
+		}
+		ingredient_json.put("main", ingredient_json_main);
+		ingredient_json.put("sub", ingredient_json_sub);
+		
+		//영양정보 데이터 가공
+		Map<String, Object> nutrition_json = new LinkedHashMap<String, Object>();
+		Map<String, Object> nutrition_json_main = new LinkedHashMap<String, Object>();
+		
+		for(int i = 0; i < nutrition_vo.size(); i++) {
+			NutritionVO temp = nutrition_vo.get(i);
+			nutrition_json_main.put(temp.getName(), temp.getAmount());
+		}
+		nutrition_json.put("nutrition_info", nutrition_json_main);
+		nutrition_json.put("calorie", detail_vo.getCalorie());
+		
+		//레시피 단계 데이터 가공
+		Map<String, Object> step_json = new LinkedHashMap<String, Object>();
+		Map<String, Object> step_json_main = new LinkedHashMap<String, Object>();
+		int prev_step = 1;
+
+		for(int i = 0; i < step_vo.size(); i++) {
+			StepVO temp = step_vo.get(i);
+			if(prev_step != temp.getParents_num()) {
+				step_json.put("Step" + prev_step , step_json_main);
+				step_json_main = new HashMap<String, Object>();
+			}
+			step_json_main.put(String.valueOf(temp.getChildren_num()), temp.getDescription());
+			prev_step = temp.getParents_num();
+		}
+		step_json.put("Step" + prev_step, step_json_main);
+		
+		
+		Map<String, Object> tags_json = new LinkedHashMap<String, Object>();
+		String tags[] = detail_vo.getTags().split("#");
+		for(int i = 1; i < tags.length; i++) {
+			tags_json.put("tags" + (i+1), tags[i]);
+		}
+		
+		
+		Map<String, Object> vo = new LinkedHashMap<String, Object>();
+		vo.put("recipe_id", detail_vo.getId());
+		vo.put("name", detail_vo.getName());
+		vo.put("short_description", detail_vo.getShort_description());
+		vo.put("long_description", detail_vo.getLong_description());
+		vo.put("cooking_time", detail_vo.getCooking_time());
+		vo.put("level", detail_vo.getLevel());	
+		vo.put("servings", detail_vo.getServings());
+		vo.put("video_url", detail_vo.getVideo_url());
+		vo.put("favorites", detail_vo.isFavorites());
+		vo.put("made", detail_vo.isMade());
+		vo.put("tags", tags_json);
+		vo.put("ingredient", ingredient_json);
+		vo.put("nutrition", nutrition_json);
+		vo.put("step", step_json);
+		
 		
 		return vo;
 	}
