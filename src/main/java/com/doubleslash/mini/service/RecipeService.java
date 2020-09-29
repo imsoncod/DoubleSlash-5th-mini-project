@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.doubleslash.mini.domain.DescriptionVO;
 import com.doubleslash.mini.domain.IdVO;
 import com.doubleslash.mini.domain.IngredientVO;
 import com.doubleslash.mini.domain.NutritionVO;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,10 +19,18 @@ import com.doubleslash.mini.domain.IdVO;
 import com.doubleslash.mini.domain.IngredientVO;
 import com.doubleslash.mini.domain.NutritionVO;
 import com.doubleslash.mini.domain.RecipeDetailVO;
+import com.doubleslash.mini.domain.RecipeDetailVO_Return;
 import com.doubleslash.mini.domain.RecipeListVO;
+import com.doubleslash.mini.domain.SearchVO;
 import com.doubleslash.mini.domain.StepVO;
 import com.doubleslash.mini.service.RecipeService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value = "Cookice", description = "API")
 @RequestMapping(value = "/recipe")
 @Controller
 public class RecipeController {
@@ -31,7 +38,9 @@ public class RecipeController {
 	@Autowired
 	private RecipeService mRecipeService;
 	
+	/*
 	//카테고리별 전체 레시피 조회(미사용)
+	@ApiOperation(value = "카테고리별 전체 레시피 리스트 조회")
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getRecipeList(HttpServletRequest request) throws Exception{
@@ -40,8 +49,15 @@ public class RecipeController {
 	
 		return vo;
 	}
+	*/
+	
 	
 	//카테고리별 인기 레시피 조회
+	@ApiOperation(value = "카테고리별 인기 메뉴 조회")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "kategorie", value = "카테고리", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/popular", method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getPopularRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
@@ -52,6 +68,11 @@ public class RecipeController {
 	}
 	
 	//카테고리별 최신 레시피 조회
+	@ApiOperation(value = "카테고리별 최신 메뉴 조회")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "kategorie", value = "카테고리", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getNewRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
@@ -62,9 +83,14 @@ public class RecipeController {
 	}
 	
 	//레시피 세부 정보 조회
+	@ApiOperation(value = "선택 메뉴 세부 레시피 정보 조회")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "recipe_id", value = "레시피 ID", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/{recipe_id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getRecipeDetail(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
+	public RecipeDetailVO_Return getRecipeDetail(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
 		IdVO id_vo = new IdVO();
 		id_vo.setUser_id(user_id);
 		id_vo.setRecipe_id(recipe_id);
@@ -117,35 +143,35 @@ public class RecipeController {
 		}
 		step_json.put("Step" + prev_step, step_json_main);
 		
-		
+		//태그 데이터 가공
 		Map<String, Object> tags_json = new LinkedHashMap<String, Object>();
 		String tags[] = detail_vo.getTags().split("#");
 		for(int i = 1; i < tags.length; i++) {
 			tags_json.put("tags" + (i+1), tags[i]);
 		}
 		
-		
-		Map<String, Object> vo = new LinkedHashMap<String, Object>();
-		vo.put("recipe_id", detail_vo.getId());
-		vo.put("name", detail_vo.getName());
-		vo.put("short_description", detail_vo.getShort_description());
-		vo.put("long_description", detail_vo.getLong_description());
-		vo.put("cooking_time", detail_vo.getCooking_time());
-		vo.put("level", detail_vo.getLevel());	
-		vo.put("servings", detail_vo.getServings());
-		vo.put("video_url", detail_vo.getVideo_url());
-		vo.put("favorites", detail_vo.isFavorites());
-		vo.put("made", detail_vo.isMade());
-		vo.put("tags", tags_json);
-		vo.put("ingredient", ingredient_json);
-		vo.put("nutrition", nutrition_json);
-		vo.put("step", step_json);
-		
+		RecipeDetailVO_Return vo = new RecipeDetailVO_Return();
+		vo.setId(detail_vo.getId());
+		vo.setName(detail_vo.getName());
+		vo.setShort_description(detail_vo.getShort_description());
+		vo.setLong_description(detail_vo.getLong_description());
+		vo.setCooking_time(detail_vo.getCooking_time());
+		vo.setLevel(detail_vo.getLevel());
+		vo.setServings(detail_vo.getServings());
+		vo.setVideo_url(detail_vo.getVideo_url());
+		vo.setFavorites(detail_vo.isFavorites());
+		vo.setMade(detail_vo.isMade());
+		vo.setTags(tags_json);
+		vo.setIngredient(ingredient_json);
+		vo.setNutrition(nutrition_json);
+		vo.setStep(step_json);		
 		
 		return vo;
 	}
 	
 	//내가 만든 레시피 조회
+	@ApiOperation(value = "내가 만든 메뉴 조회")
+    @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	@RequestMapping(value = "/made", method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getMadeRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
@@ -155,6 +181,11 @@ public class RecipeController {
 	}
 	
 	//내가 만든 레피시 등록, 해당 레시피 사용자수 +1
+	@ApiOperation(value = "내가 만든 메뉴 등록")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "recipe_id", value = "레시피 ID", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/made/{recipe_id}", method = RequestMethod.POST)
 	@ResponseBody
 	public int postMadeRecipe(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
@@ -173,6 +204,8 @@ public class RecipeController {
 	}
 	
 	//나의 즐겨찾기 레시피 조회
+	@ApiOperation(value = "나의 즐겨찾기(스크랩) 메뉴 조회")
+	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	@RequestMapping(value = "/favorites", method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getFavoriteRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
@@ -182,6 +215,11 @@ public class RecipeController {
 	}
 	
 	//나의 즐겨찾기 레시피 등록
+	@ApiOperation(value = "나의 즐겨찾기(스크랩) 메뉴 등록")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "recipe_id", value = "레시피 ID", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/favorites/{recipe_id}", method = RequestMethod.POST)
 	@ResponseBody
 	public int postFavoriteRecipe(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
@@ -195,6 +233,11 @@ public class RecipeController {
 	}
 	
 	//나의 즐겨찾기 레시피 삭제
+	@ApiOperation(value = "나의 즐겨찾기(스크랩) 메뉴 삭제")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "recipe_id", value = "레시피 ID", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/favorites/{recipe_id}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public int deleteFavoriteRecipe(@PathVariable int recipe_id, @RequestHeader(value="user_id") String user_id) throws Exception{
@@ -208,23 +251,28 @@ public class RecipeController {
 	}
 	
 	//레시피 검색
+	@ApiOperation(value = "메뉴 / 재료 검색")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "keyword", value = "검색 키워드", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	})
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> searchRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
+	public SearchVO searchRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
 		String keyword = request.getParameter("keyword");
 		
-		Map<String, Object> search_result = new HashMap<String, Object>();
+		SearchVO vo = new SearchVO();
 		
 		//메뉴로 레시피 검색
 		List<RecipeListVO> menu_vo = mRecipeService.searchRecipeList_Menu(user_id, keyword);
-		
+	
 		//재료로 레시피 검색
 		List<RecipeListVO> ingredient_vo = mRecipeService.searchRecipeList_Ingredient(user_id, keyword);
 		
-		search_result.put("search_menu", menu_vo);
-		search_result.put("search_ingredient", ingredient_vo);
+		vo.setSearch_menu(menu_vo);
+		vo.setSearch_ingredient(ingredient_vo);
 		
-		return search_result;
+		return vo;
 	}
 	
 }

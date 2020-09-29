@@ -2,7 +2,6 @@ package com.doubleslash.mini.mapper;
 
 import java.util.List;
 
-import com.doubleslash.mini.domain.DescriptionVO;
 import com.doubleslash.mini.domain.IdVO;
 import com.doubleslash.mini.domain.IngredientVO;
 import com.doubleslash.mini.domain.NutritionVO;
