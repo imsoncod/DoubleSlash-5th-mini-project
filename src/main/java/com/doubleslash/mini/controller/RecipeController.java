@@ -21,6 +21,7 @@ import com.doubleslash.mini.domain.NutritionVO;
 import com.doubleslash.mini.domain.RecipeDetailVO;
 import com.doubleslash.mini.domain.RecipeDetailVO_Return;
 import com.doubleslash.mini.domain.RecipeListVO;
+import com.doubleslash.mini.domain.RecipeListVO_Return;
 import com.doubleslash.mini.domain.SearchVO;
 import com.doubleslash.mini.domain.StepVO;
 import com.doubleslash.mini.service.RecipeService;
@@ -60,9 +61,12 @@ public class RecipeController {
 	})
 	@RequestMapping(value = "/popular", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RecipeListVO> getPopularRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
+	public RecipeListVO_Return getPopularRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
 		String kategorie = request.getParameter("kategorie");
-		List<RecipeListVO> vo = mRecipeService.getPopularRecipeList(kategorie, user_id);
+		List<RecipeListVO> list_vo = mRecipeService.getPopularRecipeList(kategorie, user_id);
+		
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
 			
 		return vo;
 	}
@@ -75,10 +79,13 @@ public class RecipeController {
 	})
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RecipeListVO> getNewRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
+	public RecipeListVO_Return getNewRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
 		String kategorie = request.getParameter("kategorie");
-		List<RecipeListVO> vo = mRecipeService.getNewRecipeList(kategorie, user_id);
+		List<RecipeListVO> list_vo = mRecipeService.getNewRecipeList(kategorie, user_id);
 		
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
+			
 		return vo;
 	}
 	
@@ -147,7 +154,7 @@ public class RecipeController {
 		Map<String, Object> tags_json = new LinkedHashMap<String, Object>();
 		String tags[] = detail_vo.getTags().split("#");
 		for(int i = 1; i < tags.length; i++) {
-			tags_json.put("tags" + (i+1), tags[i]);
+			tags_json.put("tags" + i, tags[i]);
 		}
 		
 		RecipeDetailVO_Return vo = new RecipeDetailVO_Return();
@@ -174,9 +181,12 @@ public class RecipeController {
     @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	@RequestMapping(value = "/made", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RecipeListVO> getMadeRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
-		List<RecipeListVO> vo = mRecipeService.getMadeRecipeList(user_id);
+	public RecipeListVO_Return getMadeRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
+		List<RecipeListVO> list_vo = mRecipeService.getMadeRecipeList(user_id);
 		
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
+			
 		return vo;
 	}
 	
@@ -208,9 +218,12 @@ public class RecipeController {
 	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	@RequestMapping(value = "/favorites", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RecipeListVO> getFavoriteRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
-		List<RecipeListVO> vo = mRecipeService.getFavoriteRecipeList(user_id);
+	public RecipeListVO_Return getFavoriteRecipeList(@RequestHeader(value="user_id") String user_id) throws Exception{
+		List<RecipeListVO> list_vo = mRecipeService.getFavoriteRecipeList(user_id);
 		
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
+			
 		return vo;
 	}
 	
