@@ -20,18 +20,18 @@ public class RecipeService {
 	private RecipeMapper mRecipeMapper;
 
 	// 레시피 리스트 조회
-	public List<RecipeListVO> getRecipeList(String kategorie) throws Exception{
-		return mRecipeMapper.getRecipeList(kategorie);
+	public List<RecipeListVO> getRecipeList(String categorie) throws Exception{
+		return mRecipeMapper.getRecipeList(categorie);
 	};
 	
 	//인기 레시피 리스트 조회
-	public List<RecipeListVO> getPopularRecipeList(String kategorie, String user_id) throws Exception{
-		return mRecipeMapper.getPopularRecipeList(kategorie, user_id);
+	public List<RecipeListVO> getPopularRecipeList(String categorie, String user_id) throws Exception{
+		return mRecipeMapper.getPopularRecipeList(categorie, user_id);
 	};
 		
 	//최신 레시피 리스트 조회
-	public List<RecipeListVO> getNewRecipeList(String kategorie, String user_id) throws Exception{
-		return mRecipeMapper.getNewRecipeList(kategorie, user_id);
+	public List<RecipeListVO> getNewRecipeList(String categorie, String user_id) throws Exception{
+		return mRecipeMapper.getNewRecipeList(categorie, user_id);
 	};
 
 	// 레시피 상세 조회
