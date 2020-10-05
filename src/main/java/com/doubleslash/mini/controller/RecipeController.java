@@ -1,5 +1,6 @@
 package com.doubleslash.mini.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -135,6 +136,25 @@ public class RecipeController {
 		nutrition_json.put("calorie", detail_vo.getCalorie());
 		
 		//레시피 단계 데이터 가공
+		List<List<Object>> step = new ArrayList<List<Object>>();
+		List<Object> in_step = new ArrayList<Object>();
+		
+		int prev_step = 1;
+		in_step.add(0, step_vo.get(0).getMs());
+		
+		for(int i = 0; i < step_vo.size(); i++) {
+			StepVO temp = step_vo.get(i);
+			if(prev_step != temp.getParents_num()) {
+				step.add(in_step);
+				in_step = new ArrayList<Object>();
+				in_step.add(0, temp.getMs());
+			}
+			in_step.add(temp.getDescription());
+			prev_step = temp.getParents_num();
+		}
+		step.add(in_step);
+
+		/* 2차원 List로 Return Type 변경
 		Map<String, Object> step_json = new LinkedHashMap<String, Object>();
 		Map<String, Object> step_json_main = new LinkedHashMap<String, Object>();
 		int prev_step = 1;
@@ -149,13 +169,22 @@ public class RecipeController {
 			prev_step = temp.getParents_num();
 		}
 		step_json.put("Step" + prev_step, step_json_main);
+		*/
 		
 		//태그 데이터 가공
+		List<String> tags = new ArrayList<String>();
+		String temp[] = detail_vo.getTags().split("#");
+		for(int i = 1; i < temp.length; i++) {
+			tags.add('#' + temp[i]);
+		}
+		
+		/* List로 Return Type 변경
 		Map<String, Object> tags_json = new LinkedHashMap<String, Object>();
 		String tags[] = detail_vo.getTags().split("#");
 		for(int i = 1; i < tags.length; i++) {
 			tags_json.put("tags" + i, tags[i]);
 		}
+		*/
 		
 		RecipeDetailVO_Return vo = new RecipeDetailVO_Return();
 		vo.setId(detail_vo.getId());
@@ -168,10 +197,10 @@ public class RecipeController {
 		vo.setVideo_url(detail_vo.getVideo_url());
 		vo.setFavorites(detail_vo.isFavorites());
 		vo.setMade(detail_vo.isMade());
-		vo.setTags(tags_json);
+		vo.setTags(tags);
 		vo.setIngredient(ingredient_json);
 		vo.setNutrition(nutrition_json);
-		vo.setStep(step_json);		
+		vo.setStep(step);		
 		
 		return vo;
 	}
