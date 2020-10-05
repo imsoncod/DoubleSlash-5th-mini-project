@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class StepVO {
 	
+	private int ms;
+	
 	private int parents_num;
 	
 	private int children_num;
