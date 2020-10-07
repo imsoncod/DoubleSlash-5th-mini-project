@@ -12,13 +12,13 @@ import com.doubleslash.mini.domain.StepVO;
 public interface RecipeMapper {
 
 	//레시피 리스트 조회(미사용)
-	public List<RecipeListVO> getRecipeList(String catrgory) throws Exception;
+	public List<RecipeListVO> getRecipeList(String category) throws Exception;
 	
 	//인기 레시피 리스트 조회
-	public List<RecipeListVO> getPopularRecipeList(String catrgory, String user_id) throws Exception;
+	public List<RecipeListVO> getPopularRecipeList(String category, String user_id) throws Exception;
 		
 	//최신 레시피 리스트 조회
-	public List<RecipeListVO> getNewRecipeList(String catrgory, String user_id) throws Exception;
+	public List<RecipeListVO> getNewRecipeList(String category, String user_id) throws Exception;
 	
 	//레시피 상세 조회
 	public RecipeDetailVO getDetailRecipeList(IdVO vo) throws Exception;
