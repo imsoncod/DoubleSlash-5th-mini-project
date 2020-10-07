@@ -46,8 +46,8 @@ public class RecipeController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<RecipeListVO> getRecipeList(HttpServletRequest request) throws Exception{
-		String categorie = request.getParameter("categorie");
-		List<RecipeListVO> vo = mRecipeService.getRecipeList(categorie);
+		String category = request.getParameter("category");
+		List<RecipeListVO> vo = mRecipeService.getRecipeList(category);
 	
 		return vo;
 	}
@@ -57,14 +57,14 @@ public class RecipeController {
 	//카테고리별 인기 레시피 조회
 	@ApiOperation(value = "카테고리별 인기 메뉴 조회")
 	@ApiImplicitParams({
-        @ApiImplicitParam(name = "categorie", value = "카테고리", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "category", value = "카테고리", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	})
 	@RequestMapping(value = "/popular", method = RequestMethod.GET)
 	@ResponseBody
 	public RecipeListVO_Return getPopularRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
-		String categorie = request.getParameter("categorie");
-		List<RecipeListVO> list_vo = mRecipeService.getPopularRecipeList(categorie, user_id);
+		String category = request.getParameter("category");
+		List<RecipeListVO> list_vo = mRecipeService.getPopularRecipeList(category, user_id);
 		
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);
@@ -75,14 +75,14 @@ public class RecipeController {
 	//카테고리별 최신 레시피 조회
 	@ApiOperation(value = "카테고리별 최신 메뉴 조회")
 	@ApiImplicitParams({
-        @ApiImplicitParam(name = "categorie", value = "카테고리", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "category", value = "카테고리", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
 	})
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	@ResponseBody
 	public RecipeListVO_Return getNewRecipeList(HttpServletRequest request, @RequestHeader(value="user_id") String user_id) throws Exception{
-		String categorie = request.getParameter("categorie");
-		List<RecipeListVO> list_vo = mRecipeService.getNewRecipeList(categorie, user_id);
+		String category = request.getParameter("category");
+		List<RecipeListVO> list_vo = mRecipeService.getNewRecipeList(category, user_id);
 		
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);

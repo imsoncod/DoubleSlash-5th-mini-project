@@ -7,7 +7,7 @@
  	<!-- 레시피 리스트 조회 (미사용) -->
     <select id="getRecipeList" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
                                          
-        select * from recipe where categorie = #{categorie};
+        select * from recipe where category = #{category};
          
     </select>
     
@@ -17,7 +17,7 @@
         select id, name, short_description, cooking_time, level, thumbnail_url,
 			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
 		from recipe A
-		where categorie = #{categorie}
+		where category = #{category}
 		order by number_of_users desc
 		limit 3;
          
@@ -29,7 +29,7 @@
         select id, name, short_description, cooking_time, level, thumbnail_url,
 			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
 		from recipe A
-		where categorie = #{categorie}
+		where category = #{category}
 		order by date desc
 		limit 3;
          
