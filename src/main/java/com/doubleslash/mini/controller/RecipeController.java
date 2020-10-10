@@ -135,19 +135,21 @@ public class RecipeController {
 		nutrition_json.put("nutrition_info", nutrition_json_main);
 		nutrition_json.put("calorie", detail_vo.getCalorie());
 		
-		//레시피 단계 데이터 가공
+		//레시피 단계 데이터 가공 & 영상구간 분할 ms데이터 가공
 		List<List<Object>> step = new ArrayList<List<Object>>();
 		List<Object> in_step = new ArrayList<Object>();
 		
+		List<Integer> ms = new ArrayList<Integer>();
+		
 		int prev_step = 1;
-		in_step.add(0, step_vo.get(0).getMs());
+		ms.add(step_vo.get(0).getMs());
 		
 		for(int i = 0; i < step_vo.size(); i++) {
 			StepVO temp = step_vo.get(i);
 			if(prev_step != temp.getParents_num()) {
 				step.add(in_step);
 				in_step = new ArrayList<Object>();
-				in_step.add(0, temp.getMs());
+				ms.add(step_vo.get(i).getMs());
 			}
 			in_step.add(temp.getDescription());
 			prev_step = temp.getParents_num();
@@ -200,7 +202,8 @@ public class RecipeController {
 		vo.setTags(tags);
 		vo.setIngredient(ingredient_json);
 		vo.setNutrition(nutrition_json);
-		vo.setStep(step);		
+		vo.setStep(step);
+		vo.setMs(ms);
 		
 		return vo;
 	}
