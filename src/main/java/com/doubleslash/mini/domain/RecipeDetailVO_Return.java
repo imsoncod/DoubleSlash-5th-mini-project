@@ -35,4 +35,6 @@ public class RecipeDetailVO_Return {
 	
 	private Object step;
 	
+	private Object ms;
+	
 }
