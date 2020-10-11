@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.doubleslash.mini.domain.IdVO;
 import com.doubleslash.mini.domain.IngredientVO;
+import com.doubleslash.mini.domain.MainVO;
+import com.doubleslash.mini.domain.MainVO_Return;
 import com.doubleslash.mini.domain.NutritionVO;
 import com.doubleslash.mini.domain.RecipeDetailVO;
 import com.doubleslash.mini.domain.RecipeDetailVO_Return;
@@ -68,6 +70,8 @@ public class RecipeController {
 		
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);
+		
+		vo.setHorizon(true);
 			
 		return vo;
 	}
@@ -87,6 +91,8 @@ public class RecipeController {
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);
 			
+		vo.setHorizon(false);
+		
 		return vo;
 	}
 	
@@ -218,6 +224,8 @@ public class RecipeController {
 		
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);
+		
+		vo.setHorizon(false);
 			
 		return vo;
 	}
@@ -255,6 +263,8 @@ public class RecipeController {
 		
 		RecipeListVO_Return vo = new RecipeListVO_Return();
 		vo.setMenu_list(list_vo);
+		
+		vo.setHorizon(false);
 			
 		return vo;
 	}
@@ -321,32 +331,35 @@ public class RecipeController {
 	}
 	
 	
-	//메인 하단 레시피 추천_1
-	@ApiOperation(value = "메인 하단 레시피 추천_1")
+	//메인 하단 레시피 추천
+	@ApiOperation(value = "메인 하단 레시피 추천")
 	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
-	@RequestMapping(value = "/main1", method = RequestMethod.GET)
+	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	@ResponseBody
-	public RecipeListVO_Return getMainRecipe_1(@RequestHeader(value="user_id") String user_id) throws Exception{
-		List<RecipeListVO> list_vo = mRecipeService.getMainRecipe_1(user_id);
-			
-		RecipeListVO_Return vo = new RecipeListVO_Return();
-		vo.setMenu_list(list_vo);
+	public MainVO_Return getMainRecipe(@RequestHeader(value="user_id") String user_id) throws Exception{
+		List<RecipeListVO> list_vo1 = mRecipeService.getMainRecipe_1(user_id);
+		List<RecipeListVO> list_vo2 = mRecipeService.getMainRecipe_2(user_id);
+		
+		MainVO main_vo1 = new MainVO();
+		MainVO main_vo2 = new MainVO();
+		
+		main_vo1.setTitle("든든한 한 끼가 먹고 싶을 땐");
+		main_vo1.setSubtitle("SubTitle");
+		main_vo1.setMenu_list(list_vo1);
+		main_vo1.setHorizon(true);
+		
+		main_vo2.setTitle("15분만에 만드는 손쉬운 요리");
+		main_vo2.setSubtitle("SubTitle");
+		main_vo2.setMenu_list(list_vo2);
+		main_vo2.setHorizon(false);
+		
+		List<MainVO> main_vo = new ArrayList<MainVO>();
+		main_vo.add(main_vo1);
+		main_vo.add(main_vo2);
+		
+		MainVO_Return vo = new MainVO_Return();
+		vo.setMain_list(main_vo);
 				
-		return vo;
-	}
-		
-		
-	//메인 하단 레시피 추천_2
-	@ApiOperation(value = "메인 하단 레시피 추천_2")
-	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
-	@RequestMapping(value = "/main2", method = RequestMethod.GET)
-	@ResponseBody
-	public RecipeListVO_Return getMainRecipe_2(@RequestHeader(value="user_id") String user_id) throws Exception{
-		List<RecipeListVO> list_vo = mRecipeService.getMainRecipe_2(user_id);
-		
-		RecipeListVO_Return vo = new RecipeListVO_Return();
-		vo.setMenu_list(list_vo);
-			
 		return vo;
 	}
 	
