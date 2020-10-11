@@ -142,7 +142,7 @@ public class RecipeController {
 		List<Integer> ms = new ArrayList<Integer>();
 		
 		int prev_step = 1;
-		ms.add(step_vo.get(0).getMs());
+		//ms.add(step_vo.get(0).getMs()); ms에서 시작부분(0) 제거
 		
 		for(int i = 0; i < step_vo.size(); i++) {
 			StepVO temp = step_vo.get(i);
@@ -154,7 +154,7 @@ public class RecipeController {
 			in_step.add(temp.getDescription());
 			prev_step = temp.getParents_num();
 		}
-		step.add(in_step);
+		//step.add(in_step); step에서 "완성"부분 제거
 
 		/* 2차원 List로 Return Type 변경
 		Map<String, Object> step_json = new LinkedHashMap<String, Object>();
@@ -317,6 +317,36 @@ public class RecipeController {
 		vo.setSearch_menu(menu_vo);
 		vo.setSearch_ingredient(ingredient_vo);
 		
+		return vo;
+	}
+	
+	
+	//메인 하단 레시피 추천_1
+	@ApiOperation(value = "메인 하단 레시피 추천_1")
+	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	@RequestMapping(value = "/main1", method = RequestMethod.GET)
+	@ResponseBody
+	public RecipeListVO_Return getMainRecipe_1(@RequestHeader(value="user_id") String user_id) throws Exception{
+		List<RecipeListVO> list_vo = mRecipeService.getMainRecipe_1(user_id);
+			
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
+				
+		return vo;
+	}
+		
+		
+	//메인 하단 레시피 추천_2
+	@ApiOperation(value = "메인 하단 레시피 추천_2")
+	@ApiImplicitParam(name = "user_id", value = "유저 ID", required = true, dataType = "string", paramType = "header")
+	@RequestMapping(value = "/main2", method = RequestMethod.GET)
+	@ResponseBody
+	public RecipeListVO_Return getMainRecipe_2(@RequestHeader(value="user_id") String user_id) throws Exception{
+		List<RecipeListVO> list_vo = mRecipeService.getMainRecipe_2(user_id);
+		
+		RecipeListVO_Return vo = new RecipeListVO_Return();
+		vo.setMenu_list(list_vo);
+			
 		return vo;
 	}
 	

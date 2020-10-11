@@ -147,4 +147,26 @@
     
     </select>
     
+     <!-- 메인 하단 레시피 추천_1 -->
+    <select id="getMainRecipe_1" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+                                         
+        select id, name, short_description, cooking_time, level, thumbnail_url,
+			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+		from recipe A
+		where menu = '한식'
+		order by name;
+         
+    </select>
+    
+     <!-- 메인 하단 레시피 추천_2 -->
+    <select id="getMainRecipe_2" parameterType="String" resultType="com.doubleslash.mini.domain.RecipeListVO">
+                                         
+        select id, name, short_description, cooking_time, level, thumbnail_url,
+			(select if(exists(select * from favorites where user_id = #{user_id} and recipe_id = A.id), True, False)) favorites
+		from recipe A
+		where cooking_time <![CDATA[<=]]> 15
+		order by name;
+         
+    </select>
+    
 </mapper>

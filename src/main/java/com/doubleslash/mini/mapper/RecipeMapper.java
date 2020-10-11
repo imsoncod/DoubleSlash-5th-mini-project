@@ -59,4 +59,11 @@ public interface RecipeMapper {
 	//재료명 검색
 	public List<RecipeListVO> searchRecipeList_Ingredient(String user_id, String keyword) throws Exception;
 	
+	/* API 추가 
+	 * 메인 하단 레시피 추천
+	 * */
+	public List<RecipeListVO> getMainRecipe_1(String user_id) throws Exception;
+	
+	public List<RecipeListVO> getMainRecipe_2(String user_id) throws Exception;
+	
 }

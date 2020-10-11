@@ -93,4 +93,15 @@ public class RecipeService {
 		return mRecipeMapper.searchRecipeList_Ingredient(user_id, keyword);
 	};
 
+	/* API 추가 
+	 * 메인 하단 레시피 추천
+	 * */
+	public List<RecipeListVO> getMainRecipe_1(String user_id) throws Exception{
+		return mRecipeMapper.getMainRecipe_1(user_id);
+	};
+	
+	public List<RecipeListVO> getMainRecipe_2(String user_id) throws Exception{
+		return mRecipeMapper.getMainRecipe_2(user_id);
+	};
+	
 }
