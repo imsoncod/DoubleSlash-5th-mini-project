@@ -12,4 +12,6 @@ public class RecipeListVO_Return {
 		
 	private List<RecipeListVO> menu_list;
 	
+	private boolean horizon;
+	
 }
