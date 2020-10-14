@@ -344,12 +344,12 @@ public class RecipeController {
 		MainVO main_vo2 = new MainVO();
 		
 		main_vo1.setTitle("든든한 한 끼가 먹고 싶을 땐");
-		main_vo1.setSubtitle("SubTitle");
+		main_vo1.setSubtitle("");
 		main_vo1.setMenu_list(list_vo1);
 		main_vo1.setHorizon(true);
 		
 		main_vo2.setTitle("15분만에 만드는 손쉬운 요리");
-		main_vo2.setSubtitle("SubTitle");
+		main_vo2.setSubtitle("");
 		main_vo2.setMenu_list(list_vo2);
 		main_vo2.setHorizon(false);
 		
